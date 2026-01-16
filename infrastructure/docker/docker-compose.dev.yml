@@ -1,0 +1,28 @@
+version: '3.8'
+
+# Extensão do docker-compose.yml para desenvolvimento
+# Uso: docker-compose -f docker-compose.yml -f docker-compose.dev.yml up -d
+
+services:
+  postgres:
+    environment:
+      # Logs mais verbosos em dev
+      POSTGRES_INITDB_ARGS: "--encoding=UTF-8"
+    command:
+      - "postgres"
+      - "-c"
+      - "log_statement=all"
+      - "-c"
+      - "log_duration=on"
+      - "-c"
+      - "log_min_duration_statement=100"
+
+  redis:
+    command: redis-server /usr/local/etc/redis/redis.conf --loglevel verbose
+
+  # Ativa as ferramentas de UI em dev
+  redis-commander:
+    profiles: []  # Remove o profile para sempre iniciar
+  
+  adminer:
+    profiles: []  # Remove o profile para sempre iniciar

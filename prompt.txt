@@ -1,0 +1,175 @@
+CryptoPulse é uma plataforma de monitoramento de criptomoedas que detecta sinais antecipados de grandes movimentos de preço. Não prevê preços, mas identifica condições estatisticamente raras (acumulação de whales, fluxo de exchanges, anomalias de volume) que historicamente precedem explosões de preço.
+
+🏗️ ARQUITETURA ATUAL
+text
+cryptopulse/
+├── backend/                 # API FastAPI + Python
+│   ├── src/
+│   │   ├── api/            # Endpoints REST
+│   │   ├── collectors/     # Coletores de dados externos
+│   │   ├── engine/         # Cálculo do Explosion Score
+│   │   ├── database/       # Models e Repositories
+│   │   ├── jobs/           # Tarefas agendadas
+│   │   ├── alerts/         # Sistema de alertas
+│   │   └── config/         # Configurações
+│   └── .env                # Variáveis de ambiente
+│
+└── frontend/               # Next.js + React + TypeScript
+    └── src/
+        ├── app/            # Páginas (App Router)
+        ├── components/     # Componentes React
+        ├── hooks/          # Custom hooks
+        ├── store/          # Zustand stores
+        ├── lib/            # Utilitários (api.ts, formatters.ts)
+        └── types/          # TypeScript types
+✅ O QUE JÁ ESTÁ FUNCIONANDO
+Funcionalidade	Status	Observação
+Dashboard com lista de ativos	✅ OK	Mostra 10 criptos
+Preço atual (Binance)	✅ OK	Dados em tempo real
+Variação 24h	✅ OK	Corrigido - usa dados da Binance
+Volume 24h	✅ OK	Corrigido - formatação correta
+Explosion Score	✅ OK	Calculado com 5 indicadores
+Sistema de Alertas	✅ OK	Sino funcionando
+Jobs agendados	✅ OK	Coleta automática a cada minuto
+WebSocket	✅ OK	Conexão estabelecida
+⚠️ PROBLEMAS IDENTIFICADOS (Ajustes Finos Pendentes)
+1. Dados de Whale incompletos
+Problema: Só BTC tem 1 transação de teste no banco
+Causa: API do Whale Alert não está configurada (chave vazia)
+Solução pendente: Implementar coleta via APIs gratuitas (Etherscan, Blockchain.com)
+2. Volume Anomaly sempre neutro (50)
+Problema: Retorna "Dados históricos insuficientes"
+Causa: Precisa de pelo menos 3-24 registros históricos de volume
+Solução: Deixar sistema rodar para acumular dados OU popular histórico
+3. Narrative Momentum sem dados
+Problema: news_count: 0
+Causa: API do CryptoPanic não configurada
+Solução pendente: Configurar API key ou usar alternativa gratuita
+4. Scores muito parecidos (51-58)
+Problema: Todos os ativos em "Atenção" com scores similares
+Causa: 3 dos 5 indicadores retornam 50 (neutro) por falta de dados
+Mitigação aplicada: Ajustamos pesos para priorizar indicadores com dados
+📁 ARQUIVOS IMPORTANTES PARA AJUSTES FINOS
+🔧 BACKEND - Coletores de Dados
+text
+backend/src/collectors/
+├── whale_collector.py      # 🐋 Coleta transações de whales
+│                           # MODIFICAR: Adicionar Etherscan/Blockchain.com
+├── price_collector.py      # 💰 Coleta preços (Binance/CoinGecko) - OK
+├── oi_collector.py         # ⚡ Coleta Open Interest (Binance Futures) - OK
+├── news_collector.py       # 📰 Coleta notícias (CryptoPanic)
+│                           # MODIFICAR: Adicionar fonte gratuita
+├── exchange_flow_collector.py  # 📊 Fluxo de exchanges
+│                               # Atualmente usa dados de whale
+└── collector_manager.py    # Orquestra todos os coletores
+🧮 BACKEND - Engine de Cálculo
+text
+backend/src/engine/
+├── engine_manager.py       # 🎯 Orquestra coleta + cálculo + persistência
+│                           # Já corrigido: usa dados da API, gera main_drivers legível
+├── score_calculator.py     # Combina os 5 indicadores com pesos
+└── indicators/
+    ├── whale_indicator.py      # Calcula score de whales (0-100)
+    ├── netflow_indicator.py    # Calcula score de netflow (0-100)
+    ├── volume_indicator.py     # Calcula score de volume (0-100)
+    ├── open_interest_indicator.py  # Calcula score de OI (0-100)
+    └── narrative_indicator.py  # Calcula score de narrativa (0-100)
+⚙️ BACKEND - Configurações
+text
+backend/src/config/
+├── constants.py            # 🎚️ Pesos dos indicadores, thresholds
+│                           # Já ajustado: Whale 30%, Netflow 30%, etc.
+└── settings.py             # Variáveis de ambiente, API keys
+
+backend/.env                # 🔑 API KEYS (WHALE_ALERT, ETHERSCAN, etc.)
+🗄️ BACKEND - Banco de Dados
+text
+backend/src/database/
+├── models/
+│   ├── price_data.py       # Modelo de preços OHLCV
+│   ├── whale_transaction.py # Modelo de transações de whale
+│   ├── signal.py           # Modelo de scores (AssetScore)
+│   └── alert.py            # Modelo de alertas
+└── repositories/
+    ├── price_repository.py  # Queries de preço
+    ├── whale_repository.py  # Queries de whale
+    └── score_repository.py  # Queries de scores
+🎨 FRONTEND - Componentes Principais
+text
+frontend/src/components/
+├── dashboard/
+│   └── AssetRow.tsx        # Linha da tabela (já corrigido formatVolume)
+├── AlertBell.tsx           # Sino de alertas (já corrigido cores)
+└── ui/                     # Componentes base (Button, Table, etc.)
+
+frontend/src/lib/
+├── api.ts                  # 📡 Chamadas à API (já corrigido rotas de alerta)
+├── constants.ts            # Cores, labels (já adicionado severidades)
+└── formatters.ts           # Formatação de números/datas
+🎯 PRÓXIMOS PASSOS (Ordem de Prioridade)
+1. Implementar Coleta de Whales via APIs Gratuitas (Opção 2)
+Arquivos a modificar:
+
+backend/src/collectors/whale_collector.py - Adicionar EtherscanCollector e BlockchainComCollector
+backend/.env - Adicionar ETHERSCAN_API_KEY (grátis)
+O que fazer:
+
+Criar classe EtherscanCollector para transações ETH grandes
+Criar classe BlockchainComCollector para transações BTC grandes
+Modificar WhaleCollector para usar as duas fontes
+2. Popular Histórico de Volume
+Arquivos a modificar:
+
+backend/src/collectors/price_collector.py - Criar método para buscar histórico
+backend/src/jobs/data_collection_job.py - Adicionar job de backfill
+O que fazer:
+
+Buscar últimos 7 dias de candles 1h da Binance
+Popular tabela price_data com histórico
+3. Adicionar Fonte de Notícias Gratuita (Opcional)
+Arquivos a modificar:
+
+backend/src/collectors/news_collector.py - Adicionar RSS feeds gratuitos
+🔑 CREDENCIAIS NECESSÁRIAS
+API	Status	Como obter
+Binance	✅ Funcionando	Não precisa de key para dados públicos
+Etherscan	⚠️ Falta configurar	https://etherscan.io/apis (grátis)
+Blockchain.com	✅ Não precisa	API pública
+CryptoPanic	⚠️ Opcional	https://cryptopanic.com/developers/api/
+Whale Alert	❌ Pago	$9/mês - não vamos usar
+📊 ESTADO DO BANCO DE DADOS
+sql
+-- Transações de whale (só 1 de teste)
+SELECT COUNT(*) FROM whale_transactions;  -- 1
+
+-- Preços coletados
+SELECT COUNT(*) FROM price_data;  -- poucos (sistema novo)
+
+-- Scores calculados
+SELECT COUNT(*) FROM asset_scores;  -- ~10-20 por ciclo
+
+-- Alertas
+SELECT COUNT(*) FROM alerts;  -- alguns alertas gerados
+🚀 COMO CONTINUAR
+Quando retomar o desenvolvimento, use este prompt:
+
+text
+Estou continuando o desenvolvimento do CryptoPulse. 
+
+Contexto: [cole este documento]
+
+Quero implementar a Opção 2: Coleta de whales via APIs gratuitas (Etherscan + Blockchain.com).
+
+O arquivo principal a modificar é: backend/src/collectors/whale_collector.py
+
+Por favor, mostre-me o conteúdo atual do arquivo antes de fazer alterações.
+✅ CORREÇÕES JÁ APLICADAS NESTA SESSÃO
+✅ backend/src/engine/engine_manager.py - Usa dados da Binance para preço/variação/volume
+✅ backend/src/config/constants.py - Pesos ajustados (Whale 30%, Netflow 30%)
+✅ frontend/src/components/dashboard/AssetRow.tsx - Usa formatVolume()
+✅ frontend/src/lib/constants.ts - Adicionadas severidades de alerta (medium, etc.)
+✅ frontend/src/components/AlertBell.tsx - Fallback para severidades desconhecidas
+✅ frontend/src/lib/api.ts - Rotas corretas (/alerts/read-many, /alerts/read-all)
+✅ frontend/src/store/alertStore.ts - Usa markAllRead() corretamente
+Última atualização: 16/01/2026
+Status: Sistema funcional com dados parciais. Aguardando implementação de APIs gratuitas para dados completos de whales.

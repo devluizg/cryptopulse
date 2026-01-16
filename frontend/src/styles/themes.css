@@ -1,0 +1,76 @@
+/* =========================================
+   CryptoPulse - Theme Variables
+   ========================================= */
+
+/* Dark Theme (Default) */
+[data-theme="dark"] {
+  --color-bg-primary: #0d1117;
+  --color-bg-secondary: #161b22;
+  --color-bg-tertiary: #21262d;
+  
+  --color-border-primary: #30363d;
+  --color-border-secondary: #21262d;
+  
+  --color-text-primary: #c9d1d9;
+  --color-text-secondary: #8b949e;
+  --color-text-muted: #6e7681;
+  
+  --color-accent-green: #22c55e;
+  --color-accent-yellow: #eab308;
+  --color-accent-red: #ef4444;
+  --color-accent-blue: #3b82f6;
+}
+
+/* Light Theme (Optional) */
+[data-theme="light"] {
+  --color-bg-primary: #ffffff;
+  --color-bg-secondary: #f6f8fa;
+  --color-bg-tertiary: #eaeef2;
+  
+  --color-border-primary: #d0d7de;
+  --color-border-secondary: #eaeef2;
+  
+  --color-text-primary: #1f2328;
+  --color-text-secondary: #656d76;
+  --color-text-muted: #8c959f;
+  
+  --color-accent-green: #1a7f37;
+  --color-accent-yellow: #9a6700;
+  --color-accent-red: #cf222e;
+  --color-accent-blue: #0969da;
+}
+
+/* Crypto-specific colors */
+:root {
+  /* Bitcoin */
+  --color-btc: #f7931a;
+  --color-btc-light: #ffb84d;
+  --color-btc-dark: #c77700;
+  
+  /* Ethereum */
+  --color-eth: #627eea;
+  --color-eth-light: #8fa5ff;
+  --color-eth-dark: #3c5ac4;
+  
+  /* Solana */
+  --color-sol: #00ffa3;
+  --color-sol-light: #4dffbc;
+  --color-sol-dark: #00cc82;
+  
+  /* BNB */
+  --color-bnb: #f3ba2f;
+  --color-bnb-light: #ffd666;
+  --color-bnb-dark: #c99400;
+  
+  /* XRP */
+  --color-xrp: #23292f;
+  
+  /* Cardano */
+  --color-ada: #0033ad;
+  
+  /* Avalanche */
+  --color-avax: #e84142;
+  
+  /* Polygon */
+  --color-matic: #8247e5;
+}

@@ -1,0 +1,142 @@
+@tailwind base;
+@tailwind components;
+@tailwind utilities;
+
+/* =========================================
+   CryptoPulse - Global Styles
+   ========================================= */
+
+@layer base {
+  * {
+    @apply border-crypto-border;
+  }
+
+  body {
+    @apply bg-crypto-dark text-crypto-text;
+    font-feature-settings: "rlig" 1, "calt" 1;
+  }
+
+  /* Custom Scrollbar */
+  ::-webkit-scrollbar {
+    width: 8px;
+    height: 8px;
+  }
+
+  ::-webkit-scrollbar-track {
+    @apply bg-crypto-darker;
+  }
+
+  ::-webkit-scrollbar-thumb {
+    @apply bg-crypto-border rounded-full;
+  }
+
+  ::-webkit-scrollbar-thumb:hover {
+    @apply bg-crypto-muted;
+  }
+}
+
+@layer components {
+  /* Score Status Cards */
+  .score-high {
+    @apply bg-score-high/10 border-score-high/30 text-score-high;
+  }
+
+  .score-attention {
+    @apply bg-score-attention/10 border-score-attention/30 text-score-attention;
+  }
+
+  .score-low {
+    @apply bg-score-low/10 border-score-low/30 text-score-low;
+  }
+
+  /* Glow Effects */
+  .glow-high {
+    box-shadow: 0 0 20px rgba(34, 197, 94, 0.3);
+  }
+
+  .glow-attention {
+    box-shadow: 0 0 20px rgba(234, 179, 8, 0.3);
+  }
+
+  .glow-low {
+    box-shadow: 0 0 20px rgba(239, 68, 68, 0.2);
+  }
+
+  /* Card Styles */
+  .card-crypto {
+    @apply bg-crypto-card border border-crypto-border rounded-lg;
+  }
+
+  /* Table Row Hover */
+  .table-row-hover {
+    @apply hover:bg-crypto-card/50 transition-colors duration-150;
+  }
+
+  /* Pulse Animation for Live Data */
+  .pulse-live {
+    animation: pulse-live 2s cubic-bezier(0.4, 0, 0.6, 1) infinite;
+  }
+
+  @keyframes pulse-live {
+    0%, 100% {
+      opacity: 1;
+    }
+    50% {
+      opacity: 0.5;
+    }
+  }
+
+  /* Number animations */
+  .number-up {
+    @apply text-score-high;
+    animation: flash-up 0.5s ease-out;
+  }
+
+  .number-down {
+    @apply text-score-low;
+    animation: flash-down 0.5s ease-out;
+  }
+
+  @keyframes flash-up {
+    0% {
+      background-color: rgba(34, 197, 94, 0.3);
+    }
+    100% {
+      background-color: transparent;
+    }
+  }
+
+  @keyframes flash-down {
+    0% {
+      background-color: rgba(239, 68, 68, 0.3);
+    }
+    100% {
+      background-color: transparent;
+    }
+  }
+}
+
+@layer utilities {
+  /* Text Gradient */
+  .text-gradient {
+    @apply bg-clip-text text-transparent bg-gradient-to-r from-score-high to-emerald-400;
+  }
+
+  /* Hide scrollbar but keep functionality */
+  .scrollbar-hide {
+    -ms-overflow-style: none;
+    scrollbar-width: none;
+  }
+
+  .scrollbar-hide::-webkit-scrollbar {
+    display: none;
+  }
+
+  /* Truncate with ellipsis */
+  .truncate-2 {
+    display: -webkit-box;
+    -webkit-line-clamp: 2;
+    -webkit-box-orient: vertical;
+    overflow: hidden;
+  }
+}

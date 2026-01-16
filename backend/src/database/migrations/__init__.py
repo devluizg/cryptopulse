@@ -1,0 +1,3 @@
+"""
+CryptoPulse - Database Migrations Package
+"""

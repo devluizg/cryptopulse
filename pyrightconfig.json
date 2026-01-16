@@ -1,0 +1,21 @@
+{
+    "include": [
+        "backend/src",
+        "scripts"
+    ],
+    "exclude": [
+        "**/node_modules",
+        "**/__pycache__",
+        "frontend",
+        "venv"
+    ],
+    "extraPaths": [
+        "backend"
+    ],
+    "venvPath": ".",
+    "venv": "venv",
+    "pythonVersion": "3.12",
+    "typeCheckingMode": "basic",
+    "reportMissingImports": "warning",
+    "reportMissingTypeStubs": false
+}
